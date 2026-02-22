@@ -2,7 +2,6 @@
 
 ## Commands
 
-- `npm start` — run main entry point
 - `node bin/cli.js serve` — import history, start listener, and serve query API (all-in-one)
 - `node bin/cli.js import` — bulk-import historical messages only
 - `node bin/cli.js listen` — start Discord listener only (Gateway WebSocket)
@@ -10,7 +9,8 @@
 - `node bin/cli.js stats` — show database statistics
 - `node bin/cli.js channels` — list imported channels
 - `node bin/cli.js guilds` — list imported guilds
-- `npx claude-md-lint@1 . --fail-under 80` — lint CLAUDE.md (CI runs this on push/PR)
+- SHOULD run `npx claude-md-lint@1 . --fail-under 80` to lint CLAUDE.md before pushing
+- CI MUST pass `claude-md-lint` on push/PR (see `.github/workflows/claude-md-lint.yml`)
 
 ## Architecture
 
@@ -36,9 +36,9 @@ src/storage/db.js       SQLite layer — schema, FTS5, upsert/query helpers
 
 ## Security
 
-- Credentials (`DISCORD_BOT_TOKEN`, `DISCORD_USER_TOKEN`) MUST NOT be committed
-- Use a `.env` file locally (already in `.gitignore`)
-- `DATABASE_PATH` — SQLite database file path (default: `discord-agent.db`)
+- Credentials (`DISCORD_BOT_TOKEN`, `DISCORD_USER_TOKEN`) MUST NOT be committed; instead, use a `.env` file locally (already in `.gitignore`)
+- `DATABASE_PATH` SHOULD be set via `.env` to configure the SQLite file path
+- Secrets MUST NOT appear in logs, error messages, or API responses; instead, redact or omit sensitive values
 
 ## Database
 
@@ -62,4 +62,4 @@ Runs on port 3141 (configurable via `-p` flag or `AGENT_API_PORT` env var). Key 
 - `GET /context/:channel/:messageId` — messages surrounding a specific message
 - `GET /user/:userId` — messages by user
 - `GET /stats` — database statistics
-- `GET /health` — health check with stats
+- `GET /health` — health check
